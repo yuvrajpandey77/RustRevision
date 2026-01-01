@@ -204,3 +204,128 @@
 // fn get_area<T: Shape> (shape: T) -> f64 {
 //     shape.area()
 // }
+
+
+// Macros in rust , metaprogramming , code generation , at compile time, 
+
+
+
+//declarative macro = like a function that generates code at compile time/ replace the code written with a different code.
+
+// macro_rules! say_hello {
+//     () => {
+//         println!("Hello, world!");
+
+//     };
+// }
+
+// fn main() {
+//     say_hello!();  // expands to: println!("Hello, world");
+// }
+
+
+// difining a create function macro 
+// 
+// macro_rules! create_function {
+    // ($func_name:ident) => {
+        // fn $func_name() {
+            // println!("Hello from {}", stringify!($func_name));
+        // }
+    // };
+// }
+// 
+// create_function!(hello); // this will create a function called "hello"
+// 
+// fn main() {
+    // hello(); // prints hello from hello
+// }
+
+// procedural marcros these are more comples macros that allow you to define custom behavior for code generation through rust code itself. procedural macros operate on rust abstract syntax tree (AST)  and are commonly used for things like deriving traits automatically or creating custom attributes.
+//
+//custom derive macros
+// #[derive(Serialize, Deserialize)]
+
+// struct User {
+//     username: String,
+//     password: String,
+//     age: u32,
+// }
+
+// // attribute-like macros
+
+// #[route("GET")]
+
+// fn home() {
+//     println!("Welcome to the home page");
+// }
+
+// #[route("POST")]
+
+// fn create_user() {
+//     println!("Creating a new post request");
+// }
+
+// macros applied to attributes
+
+
+//cargo add serde serde_json
+// update serde to use th derive features
+
+// serde = {version = "1.0.218", features = ["derive"]}
+
+use serde::{Serialize, Deserialize};
+
+#[derive(Serialize, Deserialize)]
+struct User {
+    #[serde(rename = "user_name")]
+    username: String,
+
+    #[serde(rename = "pass_word")]
+    password: String,
+
+    #[serde(rename = "user_age")]
+    age: u32,
+}
+
+fn serde_example() {
+    let user = User {
+        username: String::from("yuvraj"),
+        password: String::from("password1234"),
+        age:30,
+    };
+
+    // serialize to json string
+    let json = serde_json::to_string(&user).unwrap();
+    println!("{}", json);
+    // prints: {"user_name":"yuvraj","pass_word":"password1234","user_age":30}
+}
+
+
+
+
+// write a macro that an take more than one function name as input and create functiosn for it 
+
+
+macro_rules! create_functions {
+    ($($func_name:ident),*) => {
+        $(
+            fn $func_name() {
+                println!("Hellor from {}", stringify!($func_name));
+
+            }
+        )*
+    };
+}
+
+create_functions!(hello, world, rust);
+
+fn main() {
+    // Run serde example
+    println!("=== Serde Example ===");
+    serde_example();
+
+    println!("\n=== Macro Example ===");
+    hello();
+    world();
+    rust();
+}
